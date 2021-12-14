@@ -4,6 +4,7 @@ curl -sfL https://get.k3s.io | sh -
 sudo apt-get install -y docker.io
 sudo kubectl create deploy myproject --image=matthieualten/filrouge
 sudo kubectl expose deploy myproject --type=LoadBalancer --port=5000 --load-balancer-ip=127.0.0.1
+sudo kubectl scale deploy/myproject --replicas 3
 SCRIPT
 
 Vagrant.configure("2") do|config|
