@@ -15,7 +15,7 @@ spec:
         app: myproject
     spec:
       containers:
-      - image: matthieualten/filrouge
+      - image: matthieualten/filrouge:$BUILD_NUMBER
         name: myproject
         ports:
         - containerPort: 5000
