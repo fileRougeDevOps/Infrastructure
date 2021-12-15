@@ -1,0 +1,52 @@
+pipeline {
+    environment {
+        registryCredential = 'dockerhub'
+    }
+    
+    agent any
+
+    stages {
+        stage('Preparation Application') {
+            steps {
+                git 'https://github.com/fileRougeDevOps/Application'
+            }
+        }
+        stage('Build Image'){
+            steps{
+                script{
+                    dockerImage = docker.build("matthieualten/filrouge:${BUILD_ID}")
+                }
+            }
+        }
+        stage('Test Image'){
+            steps{    
+                sh '''
+                CID="\$(docker run -d -P matthieualten/filrouge:$BUILD_ID)"
+                docker kill "\${CID}"
+                docker rm -v "\${CID}"
+                '''
+            }
+        }
+        stage('Image Delivery'){
+            steps{
+                script{
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Preparation Infrastructure') {
+            steps {
+                git 'https://github.com/fileRougeDevOps/Infrastructure'
+            }
+        }
+        stage('Deploy myproject'){
+            steps{
+               withKubeConfig([credentialsId: 'k3s']) {
+                   sh 'envsubst < myproject.yaml | kubectl apply -f -'
+                }
+            }
+        }
+    }
+}
