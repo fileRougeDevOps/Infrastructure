@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myproject 
+  labels:
+    app: pythonmyprojecttest
+spec:
+  selector:
+    matchLabels:
+      app: myproject
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: myproject
+    spec:
+      containers:
+      - image: matthieualten/filrouge
+        name: myproject
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myproject
+  labels:
+    app: myproject
+spec:
+  ports:
+    - port: 5000
+      targetPort: 5000
+  selector:
+    app: myproject 
+  type: LoadBalancer
+  loadBalancerIP: 127.0.0.1
