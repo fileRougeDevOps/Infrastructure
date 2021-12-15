@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: myproject 
   labels:
-    app: pythonmyprojecttest
+    app: myproject
 spec:
   selector:
     matchLabels:
